@@ -1,0 +1,45 @@
+# Render Blueprint — deploys server + PostgreSQL as a free Web Service
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: snakes-fo-server
+    runtime: node
+    region: oregon   # closest free region
+    plan: free
+    buildCommand: |
+      npm install -g pnpm &&
+      pnpm install --frozen-lockfile &&
+      pnpm --filter @game/shared build &&
+      pnpm --filter @game/server build &&
+      pnpm --filter @game/server exec prisma migrate deploy
+    startCommand: pnpm --filter @game/server start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: snakes-fo-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true   # Render auto-generates a secure random string
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false           # Set manually after Vercel deploy (e.g. https://snakes-fo.vercel.app)
+      - key: DEMO_MODE
+        value: "true"
+      - key: LOG_LEVEL
+        value: info
+      - key: VIX_TICK_MS
+        value: "15000"
+    healthCheckPath: /healthz
+    autoDeploy: true          # Auto-deploy on push to main
+
+databases:
+  - name: snakes-fo-db
+    plan: free                # Free PostgreSQL (90 days, then need to recreate)
+    region: oregon
+    databaseName: fno_game
+    user: fno_admin

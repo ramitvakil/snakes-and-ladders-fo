@@ -1,6 +1,8 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { Server as SocketIOServer } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import Redis from 'ioredis';
@@ -17,6 +19,20 @@ const corsOptions = getCorsOptions();
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// ─── Security ───
+app.use(helmet({
+  contentSecurityPolicy: false, // SPA handles its own CSP
+  crossOriginEmbedderPolicy: false, // Allow cross-origin resources
+}));
+app.set('trust proxy', 1); // Trust first proxy (Render's load balancer)
+app.use('/api/', rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100,            // 100 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later' },
+}));
 
 // Request ID middleware
 app.use((_req, res, next) => {
