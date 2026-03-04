@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "outputDirectory": "dist",
-  "buildCommand": "pnpm --filter @game/shared build && pnpm --filter @game/client build && cp -r packages/client/dist .",
+  "outputDirectory": "packages/client/dist",
+  "buildCommand": "bash vercel-build.sh",
   "installCommand": "npm install -g pnpm@9 && pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
