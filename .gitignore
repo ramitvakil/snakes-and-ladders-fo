@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Database
+packages/server/prisma/*.db
+packages/server/prisma/migrations/*.sql.bak
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# Turbo
+.turbo/
+
+# Docker
+docker/data/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Generated docs
+docs/api/generated/
+
+# Sentry
+.sentryclirc
+nul

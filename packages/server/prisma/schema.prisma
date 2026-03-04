@@ -1,0 +1,111 @@
+// Prisma Schema for F&O Roguelite Board Game
+// SQLite for local dev, PostgreSQL for production
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User & Auth ───────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  displayName  String   @map("display_name")
+  tier         String   @default("Apprentice") // SubscriptionTier enum
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  gamePlayers  GamePlayer[]
+  leaderboard  Leaderboard?
+
+  @@map("users")
+}
+
+// ─── Game ──────────────────────────────────────────────────
+
+model Game {
+  id          String   @id @default(uuid())
+  mode        String   // 'SinglePlayer' | 'Multiplayer'
+  status      String   @default("waiting") // waiting | in_progress | completed | abandoned
+  boardConfig String   @default("{}") @map("board_config") // serialized BoardMap overrides (JSON string)
+  vixLevel    Float    @default(18) @map("vix_level")
+  currentTurn Int      @default(0) @map("current_turn")
+  winnerId    String?  @map("winner_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  players  GamePlayer[]
+  turnLogs TurnLog[]
+
+  @@map("games")
+}
+
+// ─── Game Player (join table: User ↔ Game) ─────────────────
+
+model GamePlayer {
+  id              String   @id @default(uuid())
+  gameId          String   @map("game_id")
+  userId          String?  @map("user_id") // null for bots
+  displayName     String   @map("display_name")
+  capital         Float    @default(100)
+  position        Int      @default(1)
+  activeBuffs     String   @default("[]") @map("active_buffs") // serialized PlayerBuff[] (JSON string)
+  currentView     String?  @map("current_view") // 'Bullish' | 'Bearish' | 'Sideways' | null
+  conviction      Int      @default(1)
+  stunTurns       Int      @default(0) @map("stun_turns")
+  isMarginCalled  Boolean  @default(false) @map("is_margin_called")
+  hasWon          Boolean  @default(false) @map("has_won")
+  isBot           Boolean  @default(false) @map("is_bot")
+  botDifficulty   String?  @map("bot_difficulty") // 'conservative' | 'aggressive' | 'adaptive'
+  turnOrder       Int      @default(0) @map("turn_order")
+  pnlHistory      String   @default("[100]") @map("pnl_history") // number[] (JSON string)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  game Game  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  turnLogs TurnLog[]
+
+  @@unique([gameId, userId])
+  @@map("game_players")
+}
+
+// ─── Turn Log ──────────────────────────────────────────────
+
+model TurnLog {
+  id         String   @id @default(uuid())
+  gameId     String   @map("game_id")
+  playerId   String   @map("player_id")
+  turnNumber Int      @map("turn_number")
+  command    String     // serialized TurnCommand (JSON string)
+  result     String     // serialized TurnResult (JSON string)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  game   Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player GamePlayer @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([gameId, turnNumber])
+  @@map("turn_logs")
+}
+
+// ─── Leaderboard ───────────────────────────────────────────
+
+model Leaderboard {
+  id             String @id @default(uuid())
+  userId         String @unique @map("user_id")
+  gamesPlayed    Int    @default(0) @map("games_played")
+  gamesWon       Int    @default(0) @map("games_won")
+  highestCapital Float  @default(100) @map("highest_capital")
+  longestStreak  Int    @default(0) @map("longest_streak")
+  totalCapitalEarned Float @default(0) @map("total_capital_earned")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("leaderboard")
+}

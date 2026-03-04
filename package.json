@@ -1,0 +1,39 @@
+{
+  "name": "snakes-and-ladders-fo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Roguelite board game inspired by Snakes & Ladders, mapped to Indian F&O market mechanics",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "test:integration": "turbo test:integration",
+    "test:e2e": "turbo test:e2e",
+    "db:migrate": "pnpm --filter @game/server exec prisma migrate dev",
+    "db:migrate:deploy": "pnpm --filter @game/server exec prisma migrate deploy",
+    "db:seed": "pnpm --filter @game/server exec prisma db seed",
+    "db:studio": "pnpm --filter @game/server exec prisma studio",
+    "db:reset": "pnpm --filter @game/server exec prisma migrate reset",
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:test": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.test.yml up -d",
+    "docker:full": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.full.yml up -d",
+    "clean": "turbo clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.0",
+    "socket.io-client": "^4.8.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,22 @@
+version: "3.9"
+
+# Overlay for test database on a separate port
+# Usage: docker compose -f docker-compose.yml -f docker-compose.test.yml up -d
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: fno-game-postgres-test
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fno_game_test
+    # No volume — ephemeral, wiped on container removal
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
