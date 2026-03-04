@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
+  "framework": null,
   "outputDirectory": "packages/client/dist",
-  "buildCommand": "pnpm install && pnpm --filter @game/shared build && pnpm --filter @game/client build",
-  "installCommand": "npm install -g pnpm && pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @game/shared build && pnpm --filter @game/client build",
+  "installCommand": "npm install -g pnpm@9 && pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
