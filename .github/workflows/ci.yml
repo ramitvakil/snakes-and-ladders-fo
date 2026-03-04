@@ -26,6 +26,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
+  type-check:
+    name: Type Check & Build
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
+      JWT_SECRET: ci-type-check-secret-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -43,20 +61,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     env:
       DATABASE_URL: postgresql://test:test@localhost:5432/snl_test
-      REDIS_URL: redis://localhost:6379
-      JWT_SECRET: ci-test-secret
+      JWT_SECRET: ci-test-secret-minimum-8
       NODE_ENV: test
 
     steps:
@@ -73,68 +81,3 @@ jobs:
       - name: Run Prisma migrations
         run: pnpm --filter @game/server exec prisma migrate deploy
       - run: pnpm test
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [lint, test]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - name: Upload server artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-dist
-          path: packages/server/dist/
-      - name: Upload client artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: client-dist
-          path: packages/client/dist/
-
-  deploy-server:
-    name: Deploy Server (Railway)
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Railway
-        uses: bervProject/railway-deploy@main
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: snl-server
-
-  deploy-client:
-    name: Deploy Client (Cloudflare Pages)
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: snl-fo-client
-          directory: packages/client/dist
