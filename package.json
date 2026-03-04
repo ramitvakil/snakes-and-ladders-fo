@@ -8,6 +8,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "vercel-build": "pnpm --filter @game/shared build && pnpm --filter @game/client build",
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
