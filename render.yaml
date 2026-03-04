@@ -8,7 +8,7 @@ services:
     plan: free
     buildCommand: |
       npm install -g pnpm@9 &&
-      pnpm install --frozen-lockfile &&
+      NODE_ENV=development pnpm install --frozen-lockfile &&
       pnpm --filter @game/shared build &&
       pnpm --filter @game/server build &&
       pnpm --filter @game/server exec prisma migrate deploy
