@@ -17,11 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": false,
-    "paths": {
-      "@game/shared": ["./packages/shared/src"],
-      "@game/shared/*": ["./packages/shared/src/*"]
-    }
+    "exactOptionalPropertyTypes": false
   },
   "exclude": ["node_modules", "dist", "coverage"]
 }

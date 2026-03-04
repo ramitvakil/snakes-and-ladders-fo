@@ -13,8 +13,8 @@
     }
   },
   "scripts": {
-    "build": "tsc --build",
-    "dev": "tsc --build --watch",
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "dev": "tsup src/index.ts --format esm --dts --watch",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
@@ -25,8 +25,9 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.7.0",
-    "vitest": "^2.1.0",
-    "@faker-js/faker": "^9.3.0"
+    "vitest": "^2.1.0"
   }
 }
