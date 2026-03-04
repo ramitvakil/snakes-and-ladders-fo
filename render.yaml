@@ -7,15 +7,12 @@ services:
     region: oregon   # closest free region
     plan: free
     buildCommand: |
-      corepack enable &&
-      corepack prepare pnpm@9.15.4 --activate &&
+      npm install -g pnpm@9 &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @game/shared build &&
       pnpm --filter @game/server build &&
       pnpm --filter @game/server exec prisma migrate deploy
-    startCommand: |
-      corepack enable &&
-      pnpm --filter @game/server start
+    startCommand: npx pnpm --filter @game/server start
     envVars:
       - key: NODE_ENV
         value: production
