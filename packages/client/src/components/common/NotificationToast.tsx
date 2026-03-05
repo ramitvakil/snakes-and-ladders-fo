@@ -7,7 +7,7 @@ export default function NotificationToast() {
   const removeNotification = useUIStore((s) => s.dismissNotification);
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+    <div className="pointer-events-none fixed bottom-4 left-3 right-3 sm:left-auto sm:right-4 z-50 flex flex-col gap-2">
       <AnimatePresence>
         {notifications.map((n) => (
           <NotificationItem
@@ -51,7 +51,7 @@ function NotificationItem({
       initial={{ opacity: 0, x: 80 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 80 }}
-      className={`pointer-events-auto cursor-pointer rounded-lg border-l-4 px-4 py-2 text-sm text-white shadow-lg ${colors[type]}`}
+      className={`pointer-events-auto cursor-pointer rounded-lg border-l-4 px-3 sm:px-4 py-2 text-xs sm:text-sm text-white shadow-lg ${colors[type]}`}
       onClick={() => onDismiss(id)}
     >
       {message}

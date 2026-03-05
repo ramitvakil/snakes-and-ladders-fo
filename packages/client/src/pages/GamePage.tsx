@@ -76,7 +76,7 @@ export default function GamePage() {
 
       {/* ── Top Bar: Game ID + Turn + Market Indicators ── */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-bold tracking-tight">
               <span className="text-emerald-400">S&L</span>
@@ -106,7 +106,7 @@ export default function GamePage() {
       </div>
 
       {/* ── Main Game Grid ── */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
         {/* Left Column: Board + Controls */}
         <div className="space-y-4">
           {/* Board */}
@@ -196,7 +196,7 @@ export default function GamePage() {
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 12 }}
-                className="glass-card rounded-xl px-4 py-2.5 flex items-center gap-3 text-sm"
+                className="glass-card rounded-xl px-3 py-2.5 sm:px-4 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm"
               >
                 <span className="text-gray-500">🤖</span>
                 <span className="text-gray-400">
@@ -205,7 +205,7 @@ export default function GamePage() {
                 </span>
                 <span className="text-gray-600">→</span>
                 <span className="text-gray-400">Tile {lastTurnResult.newPosition}</span>
-                <span className="ml-auto font-mono font-semibold">
+                <span className="ml-auto font-mono font-semibold text-xs sm:text-sm">
                   <span className={lastTurnResult.capitalDelta >= 0 ? 'text-emerald-400' : 'text-red-400'}>
                     {lastTurnResult.capitalDelta >= 0 ? '+' : ''}₹
                     {Math.abs(lastTurnResult.capitalDelta).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
@@ -217,7 +217,7 @@ export default function GamePage() {
         </div>
 
         {/* ── Right Sidebar ── */}
-        <aside className="space-y-3">
+        <aside className="space-y-3 xl:space-y-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
           {/* VIX */}
           <VIXMeter vixLevel={vixLevel} />
 
@@ -234,7 +234,7 @@ export default function GamePage() {
           <TurnLog />
 
           {/* Players */}
-          <div className="glass-card rounded-xl p-3">
+          <div className="glass-card rounded-xl p-3 sm:col-span-2 xl:col-span-1">
             <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Players</h3>
             <div className="space-y-2">
               {players.map((p) => {

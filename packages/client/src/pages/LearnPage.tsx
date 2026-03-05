@@ -7,9 +7,10 @@ import clsx from 'clsx';
    Tabs: Greeks | Strategies | Glossary | Tips | Patterns
    ═══════════════════════════════════════════════════════════ */
 
-type TabId = 'greeks' | 'strategies' | 'glossary' | 'tips' | 'patterns';
+type TabId = 'guidebook' | 'greeks' | 'strategies' | 'glossary' | 'tips' | 'patterns';
 
 const TABS: { id: TabId; label: string; emoji: string }[] = [
+  { id: 'guidebook', label: 'Guidebook', emoji: '📘' },
   { id: 'greeks', label: 'Option Greeks', emoji: '🏛️' },
   { id: 'strategies', label: 'Strategies', emoji: '♟️' },
   { id: 'glossary', label: 'Glossary', emoji: '📖' },
@@ -18,7 +19,7 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 ];
 
 export default function LearnPage() {
-  const [activeTab, setActiveTab] = useState<TabId>('greeks');
+  const [activeTab, setActiveTab] = useState<TabId>('guidebook');
 
   return (
     <div className="max-w-4xl mx-auto py-8">
@@ -32,6 +33,7 @@ export default function LearnPage() {
         <p className="mt-2 text-sm text-gray-500">
           Master F&amp;O concepts while you play — every game mechanic teaches a real market principle
         </p>
+        <p className="mt-1 text-xs text-emerald-400/80">Includes Trader’s Guidebook for mobile-first gameplay decisions</p>
       </div>
 
       {/* Tab bar */}
@@ -62,6 +64,7 @@ export default function LearnPage() {
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.2 }}
         >
+          {activeTab === 'guidebook' && <GuidebookTab />}
           {activeTab === 'greeks' && <GreeksTab />}
           {activeTab === 'strategies' && <StrategiesTab />}
           {activeTab === 'glossary' && <GlossaryTab />}
@@ -69,6 +72,77 @@ export default function LearnPage() {
           {activeTab === 'patterns' && <PatternsTab />}
         </motion.div>
       </AnimatePresence>
+    </div>
+  );
+}
+
+function GuidebookTab() {
+  return (
+    <div className="space-y-4">
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4">
+        <h2 className="text-sm font-bold text-white mb-1.5">Ⅰ. Objective</h2>
+        <p className="text-xs text-gray-300 leading-relaxed">
+          Reach Tile 100 (Financial Freedom) with capital intact, or hit the ₹2,00,000 milestone first.
+        </p>
+      </section>
+
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4 space-y-3">
+        <h2 className="text-sm font-bold text-white">Ⅱ. The Game Interface</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <InfoCard
+            icon="🌐"
+            title="Global Header"
+            text="Track NIFTY/SENSEX/BANKNIFTY, FII/DII flows, and A/D ratio to read market mood and breadth before every roll."
+          />
+          <InfoCard
+            icon="🌪️"
+            title="VIX Engine"
+            text="VIX 0–15 = calm, 15–25 = standard, 25+ = VIX storm (bigger reward and bigger risk)."
+          />
+        </div>
+      </section>
+
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4 space-y-3">
+        <h2 className="text-sm font-bold text-white">Ⅲ. Gameplay Mechanics</h2>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <MiniStat label="Step 1" value="Pick View: Bull / Bear / Flat" />
+          <MiniStat label="Step 2" value="Set Conviction: 1.0× to 5.0×" />
+          <MiniStat label="Step 3" value="Roll and Resolve P&L" />
+        </div>
+        <div className="rounded-lg bg-gray-900/60 p-3 border border-gray-700/20">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">P&L Formula</p>
+          <p className="text-xs text-emerald-300 font-mono">P&amp;L = (Base Reward/Penalty × Conviction) − Theta Decay</p>
+        </div>
+      </section>
+
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4 space-y-3">
+        <h2 className="text-sm font-bold text-white">Ⅳ. Special Tiles</h2>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <MiniStat label="Ladder: Policy Pivot" value="Strong upward jump; boosts Bull views" />
+          <MiniStat label="Ladder: Short Covering" value="Fast move forward as bears exit" />
+          <MiniStat label="Snake: Fat Finger" value="Accidental sell-off; move backward" />
+          <MiniStat label="Snake: Circuit Breaker" value="High-conviction penalty during halt" />
+          <MiniStat label="Event: RBI Decision" value="Immediate VIX spike and volatility" />
+        </div>
+      </section>
+
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4 space-y-3">
+        <h2 className="text-sm font-bold text-white">Ⅴ. Greeks (Hidden Stats)</h2>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <MiniStat label="Theta" value="Small capital decay every turn" />
+          <MiniStat label="Vega" value="High VIX widens P&L swings" />
+          <MiniStat label="Delta" value="Capital sensitivity to direction" />
+        </div>
+      </section>
+
+      <section className="rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 p-4">
+        <h2 className="text-sm font-bold text-white mb-2">Ⅵ. Pro Tips</h2>
+        <ul className="space-y-1.5 text-xs text-gray-300 list-disc pl-4">
+          <li>Read the live feed before declaring your view.</li>
+          <li>During VIX storms, reduce conviction until conditions stabilize.</li>
+          <li>Tier progression unlocks deeper Greek modifiers — adapt your risk.</li>
+        </ul>
+      </section>
     </div>
   );
 }
